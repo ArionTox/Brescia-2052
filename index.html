@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brescia 2052 — Strategie e Investimenti</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --deep: #0A0E1A;
+    --surface: #1A2235;
+    --surface2: #111827;
+    --text: #E8E4D9;
+    --muted: #8A8577;
+    --accent: #4A7FA5;
+    --green: #3A7D5A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--deep);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,14,26,0.93);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    padding: 0 2rem;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.1em; color: var(--gold); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Space Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold-light); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden; padding: 2rem;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,168,76,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 70%, rgba(74,127,165,0.06) 0%, transparent 60%),
+      linear-gradient(180deg, #0A0E1A 0%, #0d1420 100%);
+  }
+
+  .rings-svg {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(700px, 95vw); opacity: 0.06;
+    animation: slowSpin 80s linear infinite;
+  }
+  @keyframes slowSpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+  .hero-year {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(7rem, 22vw, 18rem);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(201,168,76,0.22);
+    letter-spacing: 0.05em; line-height: 1;
+    position: absolute; user-select: none;
+    animation: fadeUp 1.8s ease forwards;
+  }
+  .hero-content {
+    position: relative; text-align: center; z-index: 2;
+    animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.32em; color: var(--gold);
+    text-transform: uppercase; margin-bottom: 1.4rem;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    letter-spacing: 0.08em; line-height: 0.9;
+    background: linear-gradient(135deg, #E8C96A 0%, #C9A84C 40%, #fff 70%, #C9A84C 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-divider {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 1.8rem auto;
+  }
+  .hero-sub {
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem); font-style: italic;
+    color: var(--muted); font-weight: 300; letter-spacing: 0.03em;
+  }
+  .hero-desc {
+    max-width: 600px; margin: 1.4rem auto 0;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    line-height: 1.8; color: rgba(232,228,217,0.75); font-weight: 300;
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    font-family: 'Space Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    animation: fadeUp 1s ease 1.8s both;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+  /* ── BUDGET TABLE SECTION ── */
+  .budget-section {
+    background: var(--surface2);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    padding: 5rem 2rem;
+  }
+  .budget-inner {
+    max-width: 900px; margin: 0 auto;
+  }
+  .section-eyebrow {
+    font-family: 'Space Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .section-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    letter-spacing: 0.07em; line-height: 1; margin-bottom: 3rem;
+  }
+  .budget-table { width: 100%; border-collapse: collapse; }
+  .budget-table tr {
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    transition: background 0.25s;
+  }
+  .budget-table tr:hover { background: rgba(201,168,76,0.04); }
+  .budget-table td {
+    padding: 1.1rem 0.5rem;
+    font-size: 1.05rem; font-weight: 300;
+  }
+  .budget-table td:first-child {
+    font-family: 'Space Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    width: 40%;
+  }
+  .budget-table td.cost {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+    letter-spacing: 0.06em;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    text-align: right;
+  }
+  .budget-table tr.total td {
+    border-top: 1px solid rgba(201,168,76,0.4);
+    padding-top: 1.5rem;
+  }
+  .budget-table tr.total td:first-child { color: var(--text); font-size: 0.75rem; }
+  .budget-table tr.total td.cost { font-size: 2.2rem; }
+
+  /* bar fill */
+  .bar-cell { width: 35%; padding-right: 1rem; }
+  .bar-track {
+    height: 3px; background: rgba(201,168,76,0.12); border-radius: 2px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px; transform-origin: left;
+    transform: scaleX(0); transition: transform 1s cubic-bezier(0.16,1,0.3,1);
+  }
+  .bar-fill.animated { transform: scaleX(1); }
+
+  .roi-callout {
+    margin-top: 2.5rem;
+    border-left: 3px solid var(--gold);
+    background: rgba(201,168,76,0.05);
+    padding: 1.2rem 1.8rem;
+    font-size: 1.05rem; line-height: 1.75;
+    color: rgba(232,228,217,0.78); font-weight: 300;
+  }
+  .roi-callout strong { color: var(--gold-light); font-weight: 600; }
+
+  /* ── PILLAR SECTIONS ── */
+  .pillars-wrap { max-width: 1200px; margin: 0 auto; }
+
+  .pillar-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    min-height: 520px;
+  }
+  .pillar-block.flip { direction: rtl; }
+  .pillar-block.flip > * { direction: ltr; }
+
+  .pillar-img {
+    position: relative; overflow: hidden; min-height: 400px;
+  }
+  .pillar-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: brightness(0.6) saturate(0.75);
+    transition: transform 0.7s ease, filter 0.5s ease;
+  }
+  .pillar-img:hover img { transform: scale(1.05); filter: brightness(0.78) saturate(1); }
+
+  .pillar-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(10,14,26,0.35) 0%, transparent 70%);
+  }
+  .pillar-img-num {
+    position: absolute; bottom: 1.5rem; right: 1.5rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 5rem;
+    color: transparent; -webkit-text-stroke: 1px rgba(201,168,76,0.4);
+    line-height: 1; user-select: none;
+  }
+
+  .pillar-content {
+    padding: 4rem 3rem;
+    background: var(--surface);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .pillar-tag {
+    font-family: 'Space Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.6rem;
+  }
+  .pillar-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    letter-spacing: 0.06em; line-height: 1; margin-bottom: 1.5rem;
+  }
+  .pillar-body {
+    font-size: 1.05rem; line-height: 1.85;
+    color: rgba(232,228,217,0.75); font-weight: 300; margin-bottom: 1.2rem;
+  }
+
+  .strategy-block { margin-top: 1.5rem; }
+  .strategy-label {
+    font-family: 'Space Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.8rem;
+  }
+  .strategy-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+  .strategy-list li {
+    font-size: 0.95rem; line-height: 1.6;
+    color: rgba(232,228,217,0.72); font-weight: 300;
+    padding-left: 1.2rem; position: relative;
+  }
+  .strategy-list li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
+  .strategy-list strong { color: var(--text); font-weight: 400; }
+
+  .cost-tag {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    margin-top: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cost-tag span {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* ── SEDI CARDS ── */
+  .sedi-section {
+    background: var(--surface2);
+    border-top: 1px solid rgba(201,168,76,0.08);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    padding: 5rem 2rem;
+  }
+  .sedi-inner { max-width: 1200px; margin: 0 auto; }
+  .sedi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem; margin-top: 3rem;
+  }
+  .sede-card {
+    background: var(--surface);
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 2px; overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+  }
+  .sede-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-4px); }
+  .sede-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.4s;
+  }
+  .sede-card:hover::before { transform: scaleX(1); }
+  .sede-card-body { padding: 1.8rem; }
+  .sede-icon { font-size: 1.6rem; margin-bottom: 0.8rem; }
+  .sede-name {
+    font-family: 'Space Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.5rem;
+  }
+  .sede-desc {
+    font-size: 1rem; line-height: 1.7;
+    color: rgba(232,228,217,0.78); font-weight: 300;
+  }
+
+  /* ── CONCLUSION ── */
+  .conclusion {
+    padding: 8rem 2rem; text-align: center; position: relative; overflow: hidden;
+  }
+  .conclusion-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.07) 0%, transparent 70%);
+  }
+  .conclusion-content { position: relative; max-width: 800px; margin: 0 auto; }
+  .conclusion-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    letter-spacing: 0.08em; line-height: 0.95; margin-bottom: 2rem;
+    background: linear-gradient(135deg, #E8C96A, #C9A84C 50%, #fff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .conclusion-text {
+    font-size: clamp(1.05rem, 2vw, 1.3rem); line-height: 1.9;
+    color: rgba(232,228,217,0.75); font-weight: 300; margin-bottom: 1.5rem;
+  }
+  .conclusion-text em { color: var(--gold-light); font-style: normal; font-weight: 400; }
+  .tags-row {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    justify-content: center; margin-top: 3rem;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid rgba(201,168,76,0.3);
+    padding: 0.5rem 1.2rem; border-radius: 2px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding: 2.5rem 2rem; text-align: center;
+    font-family: 'Space Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .pillar-block, .pillar-block.flip { grid-template-columns: 1fr; direction: ltr; }
+    .pillar-img { min-height: 280px; }
+    .pillar-content { padding: 2.5rem 2rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">Brescia 2052</div>
+    <ul class="nav-links">
+      <li><a href="#budget">Investimenti</a></li>
+      <li><a href="#socio">Socio-politico</a></li>
+      <li><a href="#economia">Economia</a></li>
+      <li><a href="#infra">Infrastrutture</a></li>
+      <li><a href="#eco">Ecologia</a></li>
+      <li><a href="#media">Media</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <svg class="rings-svg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="250" cy="250" r="240" stroke="#C9A84C" stroke-width="1"/>
+    <circle cx="250" cy="250" r="180" stroke="#C9A84C" stroke-width="0.5"/>
+    <circle cx="250" cy="250" r="120" stroke="#C9A84C" stroke-width="1"/>
+    <line x1="0" y1="250" x2="500" y2="250" stroke="#C9A84C" stroke-width="0.5"/>
+    <line x1="250" y1="0" x2="250" y2="500" stroke="#C9A84C" stroke-width="0.5"/>
+    <circle cx="250" cy="250" r="5" fill="#C9A84C"/>
+  </svg>
+  <div class="hero-year">2052</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Giochi Olimpici &nbsp;·&nbsp; Edizione XXXII</div>
+    <h1 class="hero-title">Olimpiadi<br>di Brescia</h1>
+    <div class="hero-divider"></div>
+    <p class="hero-sub">Uno sguardo al futuro</p>
+    <p class="hero-desc" style="margin-top:1.5rem">
+      Immaginate il 2052. Il mondo è cambiato. Le città sono più intelligenti,
+      più attente all'ambiente e alle persone. In questo contesto nasce un evento
+      straordinario: le Olimpiadi di Brescia.
+    </p>
+  </div>
+  <div class="scroll-hint">
+    <span>Scopri</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- BUDGET TABLE -->
+<section id="budget" class="budget-section">
+  <div class="budget-inner">
+    <div class="section-eyebrow reveal">Sintesi Economica</div>
+    <h2 class="section-heading reveal">Piano Finanziario</h2>
+    <table class="budget-table reveal">
+      <tbody>
+        <tr>
+          <td>Socio-Politico</td>
+          <td class="bar-cell"><div class="bar-track"><div class="bar-fill" data-w="0.089"></div></div></td>
+          <td class="cost">€0,8 Mld</td>
+        </tr>
+        <tr>
+          <td>Economia &amp; Start-up</td>
+          <td class="bar-cell"><div class="bar-track"><div class="bar-fill" data-w="0.133"></div></div></td>
+          <td class="cost">€1,2 Mld</td>
+        </tr>
+        <tr>
+          <td>Infrastrutture &amp; Sedi</td>
+          <td class="bar-cell"><div class="bar-track"><div class="bar-fill" data-w="0.5"></div></div></td>
+          <td class="cost">€4,5 Mld</td>
+        </tr>
+        <tr>
+          <td>Ecologia &amp; Ambiente</td>
+          <td class="bar-cell"><div class="bar-track"><div class="bar-fill" data-w="0.167"></div></div></td>
+          <td class="cost">€1,5 Mld</td>
+        </tr>
+        <tr>
+          <td>Media &amp; Tech</td>
+          <td class="bar-cell"><div class="bar-track"><div class="bar-fill" data-w="0.111"></div></div></td>
+          <td class="cost">€1,0 Mld</td>
+        </tr>
+        <tr class="total">
+          <td>Totale Investimento</td>
+          <td class="bar-cell"></td>
+          <td class="cost">€9,0 Mld</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="roi-callout reveal">
+      📈 &nbsp;L'indotto economico stimato (turismo, tasse, nuove imprese) potrà generare un ritorno di circa <strong>€15 Miliardi</strong> nei 10 anni successivi ai Giochi, rendendo l'investimento altamente profittevole per il territorio.
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<div class="pillars-wrap">
+
+  <!-- 1. SOCIO-POLITICO -->
+  <div id="socio" class="pillar-block reveal">
+    <div class="pillar-img">
+      <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80" alt="Comunità e cooperazione">
+      <div class="pillar-img-overlay"></div>
+      <div class="pillar-img-num">01</div>
+    </div>
+    <div class="pillar-content">
+      <div class="pillar-tag">Aspetto</div>
+      <h2 class="pillar-title">Socio-<br>Politico</h2>
+      <p class="pillar-body">Le Olimpiadi come strumento di partecipazione democratica e coesione internazionale. Brescia diventa laboratorio di governance del futuro.</p>
+      <div class="strategy-block">
+        <div class="strategy-label">Come realizzarlo</div>
+        <ul class="strategy-list">
+          <li><strong>Piattaforma "Brescia Decide":</strong> Blockchain comunale per il voto dei cittadini sulla destinazione dei fondi e il design degli spazi pubblici.</li>
+          <li><strong>Programma "Scuole Olimpiche":</strong> Scambi internazionali obbligatori per formare una generazione di volontari multilingue e aperti al mondo.</li>
+        </ul>
+      </div>
+      <div class="cost-tag">Investimento stimato <span>€800 Mln</span></div>
+    </div>
+  </div>
+
+  <!-- 2. ECONOMIA -->
+  <div id="economia" class="pillar-block flip reveal">
+    <div class="pillar-img">
+      <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=900&q=80" alt="Skyline città moderna">
+      <div class="pillar-img-overlay"></div>
+      <div class="pillar-img-num">02</div>
+    </div>
+    <div class="pillar-content">
+      <div class="pillar-tag">Aspetto</div>
+      <h2 class="pillar-title">Economico</h2>
+      <p class="pillar-body">Un piano finanziario innovativo che coinvolge i cittadini come investitori e trasforma le aree dismesse in motori di crescita tecnologica.</p>
+      <div class="strategy-block">
+        <div class="strategy-label">Come realizzarlo</div>
+        <ul class="strategy-list">
+          <li><strong>Bond "Brescia 2052":</strong> Titoli di stato locali per permettere ai cittadini di investire nel progetto e ricevere dividendi dai ricavi turistici futuri.</li>
+          <li><strong>Distretto "Mella Valley":</strong> Incubatore tecnologico nelle aree industriali dismesse per sviluppare i software di gestione dell'evento.</li>
+        </ul>
+      </div>
+      <div class="cost-tag">Investimento stimato <span>€1,2 Mld</span></div>
+    </div>
+  </div>
+
+  <!-- 3. INFRASTRUTTURE -->
+  <div id="infra" class="pillar-block reveal">
+    <div class="pillar-img">
+      <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=900&q=80" alt="Infrastrutture urbane moderne">
+      <div class="pillar-img-overlay"></div>
+      <div class="pillar-img-num">03</div>
+    </div>
+    <div class="pillar-content">
+      <div class="pillar-tag">Aspetto</div>
+      <h2 class="pillar-title">Infra-<br>strutturale</h2>
+      <p class="pillar-body">La trasformazione di Brescia in Smart City totale, con poli strategici distribuiti su tutto il territorio per valorizzare paesaggi unici.</p>
+      <div class="strategy-block">
+        <div class="strategy-label">Come realizzarlo</div>
+        <ul class="strategy-list">
+          <li><strong>Recupero Industriale:</strong> Trasformazione delle aree ex-Alfa Acciai e comparto Milano in hub logistici e sportivi, senza consumo di suolo agricolo.</li>
+          <li><strong>Appalti "Smart":</strong> Stampa 3D su larga scala con materiali riciclati per costruire i moduli del Villaggio Olimpico in tempi record.</li>
+        </ul>
+      </div>
+      <div class="cost-tag">Investimento stimato <span>€4,5 Mld</span></div>
+    </div>
+  </div>
+
+  <!-- 4. ECOLOGIA -->
+  <div id="eco" class="pillar-block flip reveal">
+    <div class="pillar-img">
+      <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=900&q=80" alt="Architettura verde sostenibile">
+      <div class="pillar-img-overlay"></div>
+      <div class="pillar-img-num">04</div>
+    </div>
+    <div class="pillar-content">
+      <div class="pillar-tag">Aspetto</div>
+      <h2 class="pillar-title">Ecologico</h2>
+      <p class="pillar-body">Un modello olimpico a impatto zero. Tecnologie all'avanguardia integrate nell'infrastruttura urbana per generare energia dalla folla stessa.</p>
+      <div class="strategy-block">
+        <div class="strategy-label">Come realizzarlo</div>
+        <ul class="strategy-list">
+          <li><strong>Pavimentazione Piezoelettrica:</strong> Mattonelle nelle zone pedonali che generano energia dal calpestio, alimentando l'illuminazione pubblica.</li>
+          <li><strong>Cintura Verde:</strong> Piantumazione di 1 milione di alberi nella fascia periurbana per assorbire le emissioni residue dei voli internazionali.</li>
+        </ul>
+      </div>
+      <div class="cost-tag">Investimento stimato <span>€1,5 Mld</span></div>
+    </div>
+  </div>
+
+  <!-- 5. MEDIA -->
+  <div id="media" class="pillar-block reveal">
+    <div class="pillar-img">
+      <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=900&q=80" alt="Realtà virtuale e tecnologia">
+      <div class="pillar-img-overlay"></div>
+      <div class="pillar-img-num">05</div>
+    </div>
+    <div class="pillar-content">
+      <div class="pillar-tag">Aspetto</div>
+      <h2 class="pillar-title">Media<br>&amp; Tech</h2>
+      <p class="pillar-body">Un ecosistema comunicativo completamente nuovo: la città diventa un ambiente aumentato, con guide olografiche e streaming in 16K senza lag.</p>
+      <div class="strategy-block">
+        <div class="strategy-label">Come realizzarlo</div>
+        <ul class="strategy-list">
+          <li><strong>Rete 7G/8G Urbana:</strong> Copertura totale della provincia per streaming in 16K e uso massiccio della realtà aumentata senza interruzioni.</li>
+          <li><strong>Avatar Assistenti:</strong> Guide turistiche olografiche multilingue distribuite per tutta la città per assistere i visitatori in tempo reale.</li>
+        </ul>
+      </div>
+      <div class="cost-tag">Investimento stimato <span>€1,0 Mld</span></div>
+    </div>
+  </div>
+
+</div><!-- end pillars-wrap -->
+
+<!-- SEDI DI GARA -->
+<section class="sedi-section">
+  <div class="sedi-inner">
+    <div class="section-eyebrow reveal">Infrastrutture</div>
+    <h2 class="section-heading reveal">Sedi di Gara</h2>
+    <div class="sedi-grid">
+      <div class="sede-card reveal">
+        <div class="sede-card-body">
+          <div class="sede-icon">🏟️</div>
+          <div class="sede-name">Stadio Rigamonti 2.0</div>
+          <div class="sede-desc">Completamente ricostruito con tecnologie bio-dinamiche. Ospiterà calcio, atletica e la cerimonia di apertura.</div>
+        </div>
+      </div>
+      <div class="sede-card reveal">
+        <div class="sede-card-body">
+          <div class="sede-icon">🏰</div>
+          <div class="sede-name">Castello di Brescia</div>
+          <div class="sede-desc">Cornice storica unica sotto tensostrutture trasparenti per tiro con l'arco e scherma.</div>
+        </div>
+      </div>
+      <div class="sede-card reveal">
+        <div class="sede-card-body">
+          <div class="sede-icon">🌊</div>
+          <div class="sede-name">Lago di Garda &amp; Iseo</div>
+          <div class="sede-desc">Vela e canottaggio sul Garda. Nuoto di fondo e triathlon sulle acque del Lago d'Iseo.</div>
+        </div>
+      </div>
+      <div class="sede-card reveal">
+        <div class="sede-card-body">
+          <div class="sede-icon">🏀</div>
+          <div class="sede-name">PalaLeonessa &amp; Brixia Forum</div>
+          <div class="sede-desc">Basket, pallavolo e ginnastica nei palazzetti modernizzati nel cuore della città.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section class="conclusion">
+  <div class="conclusion-bg"></div>
+  <div class="conclusion-content reveal">
+    <div style="font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem">
+      Conclusione · 2052
+    </div>
+    <h2 class="conclusion-title">Non una Spesa.<br>Un Salto nel Futuro.</h2>
+    <p class="conclusion-text">
+      Con un investimento di <em>9 miliardi di euro</em>, Brescia non acquista solo un evento sportivo: acquista una nuova identità di metropoli globale, sostenibile e tecnologica.
+    </p>
+    <p class="conclusion-text">
+      Un ritorno stimato di <em>€15 miliardi</em> nei dieci anni successivi dimostra che ogni euro investito oggi è la fondazione di un domani più prospero per l'intera regione.
+    </p>
+    <div class="tags-row">
+      <span class="tag">€9 Mld Investimento</span>
+      <span class="tag">€15 Mld Ritorno</span>
+      <span class="tag">Smart City</span>
+      <span class="tag">Impatto Zero</span>
+      <span class="tag">1M Alberi</span>
+      <span class="tag">Rete 7G/8G</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; Olimpiadi di Brescia 2052 &nbsp;·&nbsp; Piano Strategico e Investimenti &nbsp;·&nbsp; Tutti i diritti riservati
+</footer>
+
+<script>
+  // Scroll reveal
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 70);
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  // Budget bar animation
+  const barObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.bar-fill').forEach((bar, i) => {
+          const w = parseFloat(bar.dataset.w);
+          setTimeout(() => {
+            bar.style.transition = `transform 1s cubic-bezier(0.16,1,0.3,1) ${i * 0.1}s`;
+            bar.style.transform = `scaleX(${w})`;
+          }, 200);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.budget-table').forEach(t => barObs.observe(t));
+</script>
+</body>
+</html>
